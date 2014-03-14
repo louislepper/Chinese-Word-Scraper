@@ -14,3 +14,43 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import sys
+import urllib.request
+import re
+from bs4 import BeautifulSoup
+
+web_address = sys.argv[1]
+
+req = urllib.request.Request(web_address)
+
+try:
+	response = urllib.request.urlopen(req)
+except urllib.error.URLError as e:
+	print(e.reason())
+	sys.exit(0)
+except urllib.error.HTTPError as e:
+	print(e.reason())
+	sys.exit(0)
+
+soup = BeautifulSoup(response.read()) #Do I need error checking here?
+
+
+texts = soup.findAll(text=True)
+
+def visible_text(element): #This *should* just return text that's visible on screen
+    if element.parent.name in ['style', 'script', '[document]', 'head', 'title','a']:
+        return ''
+
+    result = re.sub('<!--.*-->|\r|\n', '', str(element), flags=re.DOTALL)
+    result = re.sub('\s{2,}|&nbsp;', ' ', result)
+    return result
+
+visible_elements = [visible_text(elem) for elem in texts]
+visible_text = ''.join(visible_elements)
+
+print(visible_text)
+
+
+
+
+
