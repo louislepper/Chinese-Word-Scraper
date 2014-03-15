@@ -63,6 +63,7 @@ visible_chinese_text = re.sub('[\(\)]', "", visible_chinese_text)
 #print(visible_chinese_text)
 
 seg_list = jieba.cut(visible_chinese_text,cut_all=True)
+seg_list = set(seg_list)
 print("\n".join(seg_list))
 
 
