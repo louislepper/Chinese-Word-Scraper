@@ -1,3 +1,4 @@
+#encoding=utf-8
 """ Copyright 2014 Louis Lepper """
 
 """ This program is free software: you can redistribute it and/or modify
@@ -18,6 +19,7 @@ import sys
 import urllib.request
 import re
 from bs4 import BeautifulSoup
+import jieba
 
 web_address = sys.argv[1]
 
@@ -50,13 +52,18 @@ visible_text = ''.join(visible_elements)
 
 # regex string to match chinese characters = '[\U00004E00-\U00009FFF\U00003400-\U00004DFF\U00020000-\U0002A6DF\U0000F900-\U0000FaFF\U0002F800-\U0002FA1F]'
 
-visible_chinese_text = re.sub('[^(\U00004E00-\U00009FFF\U00003400-\U00004DFF\U00020000-\U0002A6DF\U0000F900-\U0000FaFF\U0002F800-\U0002FA1F)]', ' ', visible_text)
+visible_chinese_text = re.sub('[^(\U00004E00-\U00009FFF\U00003400-\U00004DFF\U00020000-\U0002A6DF\U0000F900-\U0000FaFF\U0002F800-\U0002FA1F)]', '', visible_text)
+
+visible_chinese_text = re.sub('[\(\)]', "", visible_chinese_text)
 
 #English text taken out, amongst various punctuation marks. Brackets seem to remain though.
 
 #Now we need to segment the chinese characters by words:
+#print(visible_text)
+#print(visible_chinese_text)
 
-print(visible_chinese_text)
+seg_list = jieba.cut(visible_chinese_text,cut_all=True)
+print("\n".join(seg_list))
 
 
 
